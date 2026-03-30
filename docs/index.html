@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legalize — 법령을 코드처럼</title>
+    <meta name="description" content="모든 법령은 Markdown 파일, 모든 개정은 Git 커밋. 대한민국 법령을 Git으로 버전 관리합니다.">
+    <meta name="keywords" content="법령, 법률, 대한민국, git, 버전 관리, 리걸테크, 오픈데이터, 국가법령정보, legalize">
+    <link rel="canonical" href="https://legalize.kr/">
+    <meta name="theme-color" content="#0F172A">
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://legalize.kr/">
+    <meta property="og:title" content="Legalize — 법령을 코드처럼">
+    <meta property="og:description" content="모든 법령은 Markdown 파일, 모든 개정은 Git 커밋. 대한민국 법령을 Git으로 버전 관리합니다.">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Legalize — 법령을 코드처럼">
+    <meta name="twitter:description" content="모든 법령은 Markdown 파일, 모든 개정은 Git 커밋. 대한민국 법령을 Git으로 버전 관리합니다.">
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Legalize KR",
+      "url": "https://legalize.kr",
+      "description": "법령을 코드처럼. 모든 법령은 Markdown 파일, 모든 개정은 Git 커밋.",
+      "applicationCategory": "DeveloperApplication",
+      "inLanguage": "ko",
+      "isPartOf": {
+        "@type": "WebApplication",
+        "name": "Legalize",
+        "url": "https://legalize.dev"
+      }
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #0F172A;
+            --midnight-up: #131c33;
+            --midnight-up2: #172035;
+            --slate: #334155;
+            --steel: #94A3B8;
+            --snow: #F8FAFC;
+            --white: #FFFFFF;
+            --accent: #2563EB;
+            --accent-light: #3B82F6;
+            --accent-dark: #1D4ED8;
+            --accent-ghost: rgba(37, 99, 235, 0.08);
+            --accent-glow: rgba(37, 99, 235, 0.15);
+            --added: #22C55E;
+            --added-bg: rgba(34, 197, 94, 0.08);
+            --removed: #EF4444;
+            --removed-bg: rgba(239, 68, 68, 0.08);
+            --border: #1E293B;
+            --font-ui: 'Noto Sans KR', -apple-system, sans-serif;
+            --font-code: 'JetBrains Mono', 'Fira Code', monospace;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-ui); background: var(--midnight); color: var(--snow); line-height: 1.7; overflow-x: hidden; }
+
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+        section { padding: 120px 0; }
+
+        /* Hero */
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 80px 0; position: relative; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%); pointer-events: none; opacity: 0.5; }
+        .hero-content { position: relative; z-index: 1; }
+
+        .hero-logo { font-size: 64px; margin-bottom: 32px; opacity: 0; transform: translateY(-20px); animation: dropIn 0.8s var(--ease-out-expo) 0.2s forwards; }
+        @keyframes dropIn { to { opacity: 1; transform: translateY(0); } }
+
+        .hero h1 { font-size: clamp(36px, 6vw, 60px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 20px; opacity: 0; animation: fadeUp 0.8s var(--ease-out-expo) 0.5s forwards; }
+        .hero h1 .accent { background: linear-gradient(135deg, var(--accent-light), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-sub { font-size: clamp(15px, 2vw, 18px); color: var(--steel); max-width: 540px; margin: 0 auto 40px; line-height: 1.7; opacity: 0; animation: fadeUp 0.8s var(--ease-out-expo) 0.7s forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; opacity: 0; animation: fadeUp 0.8s var(--ease-out-expo) 0.9s forwards; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 8px; font-family: var(--font-ui); font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.2s ease; cursor: pointer; border: none; }
+        .btn-primary { background: var(--accent); color: var(--white); }
+        .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+        .btn-outline { background: transparent; color: var(--snow); border: 1px solid var(--border); }
+        .btn-outline:hover { border-color: var(--steel); background: var(--accent-ghost); }
+
+        .hero-stats { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.8s var(--ease-out-expo) 1.1s forwards; }
+        .hero-stat { text-align: center; }
+        .hero-stat-num { font-size: 32px; font-weight: 700; font-family: var(--font-code); color: var(--accent-light); }
+        .hero-stat-label { font-size: 13px; color: var(--steel); margin-top: 4px; }
+
+        /* Sections */
+        .section-label { font-family: var(--font-code); font-size: 13px; font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+        .section-title { font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; }
+        .section-desc { font-size: 16px; color: var(--steel); max-width: 560px; line-height: 1.7; }
+
+        /* Diff */
+        .diff-section { background: var(--midnight-up); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .diff-block { background: var(--midnight); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 48px; }
+        .diff-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-family: var(--font-code); font-size: 13px; color: var(--steel); }
+        .diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--slate); }
+        .diff-filename { color: var(--snow); font-weight: 500; }
+        .diff-content { padding: 0; font-family: var(--font-code); font-size: 13px; line-height: 1.85; overflow-x: auto; }
+        .diff-line { padding: 2px 20px 2px 56px; position: relative; white-space: pre; min-height: 26px; }
+        .diff-line::before { content: attr(data-line); position: absolute; left: 20px; width: 28px; text-align: right; color: var(--slate); font-size: 12px; user-select: none; }
+        .diff-line.context { color: var(--steel); }
+        .diff-line.removed { background: var(--removed-bg); color: var(--removed); }
+        .diff-line.added { background: var(--added-bg); color: var(--added); }
+        .diff-line .prefix { user-select: none; margin-right: 8px; opacity: 0.6; }
+        .diff-caption { margin-top: 24px; display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--steel); }
+        .diff-caption-tag { font-family: var(--font-code); font-size: 12px; padding: 4px 10px; background: var(--accent-ghost); color: var(--accent-light); border-radius: 6px; font-weight: 500; }
+
+        /* How grid */
+        .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 56px; }
+        @media (max-width: 768px) { .how-grid { grid-template-columns: 1fr; } }
+        .how-card { padding: 32px; border: 1px solid var(--border); border-radius: 12px; background: var(--midnight-up); transition: border-color 0.3s ease; }
+        .how-card:hover { border-color: var(--slate); }
+        .how-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: var(--accent-ghost); border-radius: 10px; margin-bottom: 20px; color: var(--accent-light); }
+        .how-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+        .how-card p { font-size: 14px; color: var(--steel); line-height: 1.7; }
+
+        /* Code */
+        .code-section { background: var(--midnight-up); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .code-block { background: var(--midnight); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-top: 48px; }
+        .code-header { padding: 14px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+        .code-header-dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--slate); }
+        .code-header-title { font-family: var(--font-code); font-size: 13px; color: var(--steel); margin-left: 8px; }
+        .code-body { padding: 24px; font-family: var(--font-code); font-size: 13.5px; line-height: 1.9; overflow-x: auto; color: var(--steel); }
+        .code-body .comment { color: var(--slate); }
+        .code-body .prompt { color: var(--accent-light); user-select: none; }
+        .code-body .cmd { color: var(--snow); }
+        .code-body .flag { color: var(--accent-light); }
+        .code-body .string { color: #F59E0B; }
+        .code-body .hash { color: var(--accent-light); }
+        .code-body .date { color: var(--added); }
+        .code-body .tag { color: #A78BFA; }
+        .code-body .path { color: #F59E0B; }
+
+        /* Categories */
+        .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 48px; }
+        .cat-card { padding: 20px; border: 1px solid var(--border); border-radius: 10px; background: var(--midnight-up); transition: border-color 0.3s ease; text-decoration: none; color: var(--snow); }
+        .cat-card:hover { border-color: var(--accent); }
+        .cat-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .cat-count { font-family: var(--font-code); font-size: 13px; color: var(--steel); }
+
+        /* Footer */
+        footer { border-top: 1px solid var(--border); padding: 48px 0; }
+        .footer-content { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+        .footer-left { display: flex; align-items: center; gap: 12px; }
+        .footer-copy { font-size: 13px; color: var(--slate); }
+        .footer-copy a { color: var(--steel); text-decoration: none; border-bottom: 1px solid var(--slate); }
+        .footer-links { display: flex; gap: 24px; }
+        .footer-links a { font-size: 13px; color: var(--steel); text-decoration: none; transition: color 0.2s ease; }
+        .footer-links a:hover { color: var(--snow); }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--slate); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content container">
+        <div class="hero-logo">&#x2696;&#xFE0F;</div>
+
+        <h1>법령을 <span class="accent">코드처럼.</span></h1>
+        <p class="hero-sub">모든 법령은 Markdown 파일, 모든 개정은 Git 커밋.<br>대한민국 법령을 검색하고, 비교하고, 활용하세요.</p>
+
+        <div class="hero-buttons">
+            <a href="https://github.com/9bow/legalize-kr" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                GitHub에서 보기
+            </a>
+            <a href="about.html" class="btn btn-outline">프로젝트 소개</a>
+        </div>
+
+        <div class="hero-stats" id="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-num" id="stat-total">—</div>
+                <div class="hero-stat-label">법령</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num" id="stat-law">—</div>
+                <div class="hero-stat-label">법률</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num" id="stat-decree">—</div>
+                <div class="hero-stat-label">대통령령</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DIFF DEMO -->
+<section class="diff-section">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-label">// 무엇이 바뀌었나</p>
+            <h2 class="section-title">모든 개정, 추적됩니다.</h2>
+            <p class="section-desc">실제 법률 개정 내용을 diff로 확인합니다. PDF를 비교하거나 요약본에 의존할 필요가 없습니다.</p>
+        </div>
+
+        <div class="diff-block reveal" style="transition-delay: 0.15s">
+            <div class="diff-header">
+                <div class="diff-dot"></div>
+                <span class="diff-filename">kr/민법/법률.md</span>
+                <span style="margin-left: auto; font-size: 12px;">민법 제809조 (근친혼 등의 금지)</span>
+            </div>
+            <div class="diff-content">
+                <div class="diff-line context" data-line="1024"><span class="prefix"> </span>## 제809조 (근친혼 등의 금지)</div>
+                <div class="diff-line context" data-line="1025"><span class="prefix"> </span></div>
+                <div class="diff-line removed" data-line="1026"><span class="prefix">-</span>**1** 8촌 이내의 혈족(친양자의 입양 전의 혈족을 포함한다) 사이에서는</div>
+                <div class="diff-line removed" data-line="1027"><span class="prefix">-</span>혼인하지 못한다.</div>
+                <div class="diff-line added" data-line="1026"><span class="prefix">+</span>**1** <strong>6촌 이내</strong>의 혈족(친양자의 입양 전의 혈족을 포함한다) 사이에서는</div>
+                <div class="diff-line added" data-line="1027"><span class="prefix">+</span>혼인하지 못한다.</div>
+                <div class="diff-line context" data-line="1028"><span class="prefix"> </span></div>
+                <div class="diff-line context" data-line="1029"><span class="prefix"> </span>**2** 6촌 이내의 혈족의 배우자, 배우자의 6촌 이내의 혈족,</div>
+            </div>
+        </div>
+
+        <div class="diff-caption reveal" style="transition-delay: 0.25s">
+            <span class="diff-caption-tag">2005-03-31</span>
+            민법 개정 — 근친혼 금지 범위를 8촌에서 6촌으로 축소
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+    <div class="container">
+        <div class="reveal" style="text-align: center;">
+            <p class="section-label">// 어떻게 작동하나</p>
+            <h2 class="section-title">국가법령정보에서 Git으로.</h2>
+        </div>
+
+        <div class="how-grid">
+            <div class="how-card reveal" style="transition-delay: 0.1s">
+                <div class="how-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <h3>공식 데이터 출처</h3>
+                <p>국가법령정보센터 OpenAPI에서 법령을 가져옵니다. 항상 공식 법령 원문을 기반으로 합니다.</p>
+            </div>
+
+            <div class="how-card reveal" style="transition-delay: 0.2s">
+                <div class="how-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+                </div>
+                <h3>구조화 + 버전 관리</h3>
+                <p>각 법령은 YAML 메타데이터가 포함된 Markdown 파일이 됩니다. 각 개정은 실제 공포일자를 가진 Git 커밋입니다.</p>
+            </div>
+
+            <div class="how-card reveal" style="transition-delay: 0.3s">
+                <div class="how-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <h3>활용하세요</h3>
+                <p>grep으로 법령을 검색하고, git log로 이력을 확인하고, git diff로 개정 내용을 비교하세요.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EXAMPLE COMMANDS -->
+<section class="code-section">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-label">// 익숙한 도구, 법령 탐색</p>
+            <h2 class="section-title">그냥 Git입니다.</h2>
+            <p class="section-desc">별도의 뷰어도, 구독도 필요 없습니다. 저장소를 복제(clone)하고 이미 아는 도구를 사용하세요.</p>
+        </div>
+
+        <div class="code-block reveal" style="transition-delay: 0.15s">
+            <div class="code-header">
+                <div class="code-header-dot"></div>
+                <div class="code-header-dot"></div>
+                <div class="code-header-dot"></div>
+                <span class="code-header-title">terminal</span>
+            </div>
+            <div class="code-body">
+<span class="comment"># 민법에서 "혼인" 관련 조문 찾기</span>
+<span class="prompt">$ </span><span class="cmd">grep</span> <span class="flag">-n</span> <span class="string">"혼인"</span> <span class="path">kr/민법/법률.md</span>
+
+<span class="comment"># 민법 관련 법령 (법률, 시행령) 개정 이력</span>
+<span class="prompt">$ </span><span class="cmd">git log</span> <span class="flag">--oneline</span> <span class="flag">--</span> <span class="path">"kr/민법/"</span>
+<span class="hash">a1b2c3d</span> <span class="date">2026-03-17</span> <span class="tag">[법률]</span> 민법
+
+<span class="comment"># 전체 법령에서 "주택임대차" 검색</span>
+<span class="prompt">$ </span><span class="cmd">grep</span> <span class="flag">-rl</span> <span class="string">"주택임대차"</span> <span class="path">kr/</span>
+<span class="path">kr/주택임대차보호법/법률.md</span>
+
+<span class="comment"># metadata.json으로 빠른 조회</span>
+<span class="prompt">$ </span><span class="cmd">jq</span> <span class="string">'."284415"'</span> <span class="path">metadata.json</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LAW CATEGORIES -->
+<section>
+    <div class="container">
+        <div class="reveal" style="text-align: center;">
+            <p class="section-label">// 파일 구조</p>
+            <h2 class="section-title">법령명으로 정리됩니다.</h2>
+            <p class="section-desc" style="margin: 0 auto;">관련 법령(법률, 시행령, 시행규칙)이 하나의 디렉토리에 함께 관리됩니다.</p>
+        </div>
+
+        <div class="cat-grid reveal" style="transition-delay: 0.15s">
+            <div class="cat-card">
+                <div class="cat-name">법률</div>
+                <div class="cat-count">kr/{법률명}/법률.md</div>
+            </div>
+            <div class="cat-card">
+                <div class="cat-name">시행령</div>
+                <div class="cat-count">kr/{법률명}/시행령.md</div>
+            </div>
+            <div class="cat-card">
+                <div class="cat-name">시행규칙</div>
+                <div class="cat-count">kr/{법률명}/시행규칙.md</div>
+            </div>
+            <div class="cat-card">
+                <div class="cat-name">독립 대통령령</div>
+                <div class="cat-count">kr/{대통령령명}/대통령령.md</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-left">
+                <span style="font-size: 20px;">&#x2696;&#xFE0F;</span>
+                <span class="footer-copy">
+                    <a href="https://legalize.dev">Legalize</a> 프로젝트의 한국 버전 ·
+                    데이터 출처: <a href="https://www.law.go.kr">국가법령정보센터</a>
+                </span>
+            </div>
+            <div class="footer-links">
+                <a href="https://github.com/9bow/legalize-kr">GitHub</a>
+                <a href="about.html">소개</a>
+                <a href="https://legalize.dev">legalize.dev</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    fetch('stats.json')
+        .then(r => r.json())
+        .then(stats => {
+            const fmt = n => n.toLocaleString('ko-KR');
+            document.getElementById('stat-total').textContent = fmt(stats.total || 0);
+            document.getElementById('stat-law').textContent = fmt(stats.types['법률'] || 0);
+            document.getElementById('stat-decree').textContent = fmt(stats.types['대통령령'] || 0);
+        })
+        .catch(() => {});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+name: Import Laws
+
+on:
+  workflow_dispatch:
+    inputs:
+      law_type:
+        description: '법령구분 필터 (비워두면 전체)'
+        required: false
+        type: string
+      limit:
+        description: '최대 import 건수 (비워두면 전체)'
+        required: false
+        type: number
+  schedule:
+    # 매일 04:00 UTC (13:00 KST)
+    - cron: '0 4 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: self-hosted
+    timeout-minutes: 360
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python venv
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          pip install -r scripts/requirements.txt
+
+      - name: Configure git
+        run: |
+          git config user.name "legalize-kr-bot"
+          git config user.email "bot@legalize.kr"
+
+      - name: Run import
+        env:
+          LAW_OC: ${{ secrets.LAW_OC }}
+          LAW_TYPE: ${{ inputs.law_type }}
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          . .venv/bin/activate
+          ARGS=""
+          if [ -n "$LAW_TYPE" ]; then ARGS="$ARGS --law-type $LAW_TYPE"; fi
+          if [ -n "$LIMIT" ]; then ARGS="$ARGS --limit $LIMIT"; fi
+          cd scripts && python import_laws.py $ARGS
+
+      - name: Validate
+        run: |
+          . .venv/bin/activate
+          cd scripts && python validate.py
+
+      - name: Push changes
+        run: |
+          git add metadata.json docs/stats.json
+          if [ -n "$(git diff --cached --name-only)" ]; then
+            git commit -m "chore: update metadata.json"
+            git push
+          fi

@@ -1,0 +1,15 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+.omc/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+.env
+*.log
+.checkpoint.json
+scripts/run_initial_import.sh

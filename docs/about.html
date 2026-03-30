@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소개 — Legalize KR</title>
+    <meta name="description" content="Legalize KR 프로젝트 소개. 대한민국 법령을 Git으로 버전 관리하는 오픈소스 프로젝트입니다.">
+    <link rel="canonical" href="https://legalize.kr/about.html">
+    <meta name="theme-color" content="#0F172A">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://legalize.kr/about.html">
+    <meta property="og:title" content="소개 — Legalize KR">
+    <meta property="og:description" content="대한민국 법령을 Git으로 버전 관리하는 오픈소스 프로젝트입니다.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #0F172A; --midnight-up: #131c33; --slate: #334155;
+            --steel: #94A3B8; --snow: #F8FAFC; --white: #FFFFFF;
+            --accent: #2563EB; --accent-light: #3B82F6; --accent-ghost: rgba(37,99,235,0.08);
+            --border: #1E293B;
+            --font-ui: 'Noto Sans KR', -apple-system, sans-serif;
+            --font-code: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-ui); background: var(--midnight); color: var(--snow); line-height: 1.8; }
+        .container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+        /* Nav */
+        nav { padding: 20px 0; border-bottom: 1px solid var(--border); }
+        nav .container { display: flex; align-items: center; justify-content: space-between; }
+        nav a { color: var(--steel); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+        nav a:hover { color: var(--snow); }
+        .nav-brand { font-weight: 700; color: var(--snow); font-size: 16px; display: flex; align-items: center; gap: 8px; }
+
+        /* Content */
+        .content { padding: 80px 0; }
+        .content h1 { font-size: 36px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px; }
+        .content h1 .accent { color: var(--accent-light); }
+        .content .lead { font-size: 18px; color: var(--steel); margin-bottom: 48px; line-height: 1.7; }
+        .content h2 { font-size: 24px; font-weight: 700; margin-top: 48px; margin-bottom: 16px; padding-top: 32px; border-top: 1px solid var(--border); }
+        .content h2:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+        .content p { font-size: 15px; color: var(--steel); margin-bottom: 16px; line-height: 1.8; }
+        .content ul { padding-left: 20px; margin-bottom: 16px; }
+        .content li { font-size: 15px; color: var(--steel); margin-bottom: 8px; line-height: 1.7; }
+        .content strong { color: var(--snow); }
+        .content code { font-family: var(--font-code); font-size: 13px; background: var(--midnight-up); padding: 2px 6px; border-radius: 4px; color: var(--accent-light); }
+        .content a { color: var(--accent-light); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+        .content a:hover { border-bottom-color: var(--accent-light); }
+
+        .meta-block { background: var(--midnight-up); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 24px 0; }
+        .meta-block h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+        .meta-block pre { font-family: var(--font-code); font-size: 13px; line-height: 1.7; color: var(--steel); overflow-x: auto; }
+
+        footer { border-top: 1px solid var(--border); padding: 32px 0; }
+        .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .footer-inner a { color: var(--steel); text-decoration: none; font-size: 13px; }
+        .footer-inner span { font-size: 13px; color: var(--slate); }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="container" style="max-width: 1080px;">
+        <a href="index.html" class="nav-brand">&#x2696;&#xFE0F; Legalize KR</a>
+        <div style="display: flex; gap: 24px;">
+            <a href="index.html">홈</a>
+            <a href="https://github.com/9bow/legalize-kr">GitHub</a>
+        </div>
+    </div>
+</nav>
+
+<div class="content">
+    <div class="container">
+        <h1>Legalize <span class="accent">KR</span></h1>
+        <p class="lead">대한민국 법령을 Git 저장소로 관리하는 오픈소스 프로젝트입니다. 모든 법령은 Markdown 파일이고, 모든 개정은 실제 공포일자를 가진 Git 커밋입니다.</p>
+
+        <h2>왜 법령을 Git으로?</h2>
+        <p>법령은 끊임없이 개정됩니다. 하지만 기존의 법령 열람 방식으로는 <strong>무엇이 언제 어떻게 바뀌었는지</strong> 파악하기가 쉽지 않습니다.</p>
+        <p>Git은 코드의 변경 이력을 관리하기 위해 만들어진 도구입니다. 법령도 텍스트입니다. Git의 버전 관리 능력을 법령에 적용하면:</p>
+        <ul>
+            <li><code>git log</code>로 법령의 <strong>전체 개정 이력</strong>을 확인</li>
+            <li><code>git diff</code>로 <strong>정확히 무엇이 바뀌었는지</strong> 한눈에 비교</li>
+            <li><code>grep</code>으로 전체 법령 체계에서 <strong>특정 단어나 조항</strong>을 검색</li>
+            <li>누구나 <strong>포크(fork), 복제(clone), 분석</strong> 가능한 오픈 데이터</li>
+        </ul>
+
+        <h2>데이터 출처</h2>
+        <p>모든 법령 데이터는 <a href="https://open.law.go.kr">국가법령정보센터 OpenAPI</a>에서 가져옵니다. 법령 원문은 대한민국 정부의 공공저작물로 자유롭게 이용할 수 있습니다.</p>
+        <p><strong>법률 <span id="stat-law">—</span>건</strong>과 <strong>대통령령 <span id="stat-decree">—</span>건</strong>이 수록되어 있으며, 향후 부령, 대법원규칙 등으로 확장할 예정입니다.</p>
+
+        <h2>파일 구조</h2>
+        <p>각 법령은 YAML 프론트매터가 포함된 Markdown 파일입니다. 관련 법령(법률, 시행령, 시행규칙)이 하나의 디렉토리에 함께 관리됩니다.</p>
+
+        <div class="meta-block">
+            <h3>예시: kr/민법/법률.md</h3>
+            <pre>---
+제목: 민법
+법령MST: 284415
+법령구분: 법률
+소관부처:
+  - 법무부
+공포일자: 2026-03-17
+시행일자: 2026-09-18
+상태: 시행
+출처: https://www.law.go.kr/법령/민법
+---
+
+# 민법
+
+## 제1조 (법원)
+민사에 관하여 법률에 규정이 없으면 관습법에 의하고
+관습법이 없으면 조리에 의한다.
+...</pre>
+        </div>
+
+        <h2>디렉토리 구조</h2>
+        <p>법령명을 기준으로 디렉토리를 구성하며, 관련 법령이 하나의 폴더에 함께 관리됩니다:</p>
+        <ul>
+            <li><code>kr/{법률명}/법률.md</code> — 국회에서 제정하는 법률</li>
+            <li><code>kr/{법률명}/시행령.md</code> — 법률의 시행령 (대통령령의 일종)</li>
+            <li><code>kr/{법률명}/시행규칙.md</code> — 법률의 시행규칙 (부령)</li>
+            <li><code>kr/{대통령령명}/대통령령.md</code> — 독립 대통령령 (규정, 직제 등)</li>
+        </ul>
+        <p>예: <code>kr/민법/</code> 디렉토리에 <code>법률.md</code>, <code>시행령.md</code>가 함께 존재합니다.</p>
+
+        <h2>Git으로 법령 활용하기</h2>
+
+        <div class="meta-block">
+            <h3>터미널에서 바로 사용</h3>
+            <pre><span style="color:#94A3B8"># 민법 관련 법령 (법률, 시행령) 개정 이력</span>
+git log -- "kr/민법/"
+
+<span style="color:#94A3B8"># 최근 개정에서 무엇이 바뀌었는지 확인</span>
+git diff HEAD~1 -- "kr/민법/법률.md"
+
+<span style="color:#94A3B8"># 전체 법령에서 특정 단어 검색</span>
+grep -r "개인정보" kr/
+
+<span style="color:#94A3B8"># 특정 날짜 시점의 법령 상태 확인</span>
+git log --before="2025-01-01" -1 -- "kr/민법/법률.md"
+
+<span style="color:#94A3B8"># 법률 개정 커밋만 보기</span>
+git log --grep="^법률:"
+
+<span style="color:#94A3B8"># 인프라 커밋만 보기</span>
+git log --grep="^chore:"</pre>
+        </div>
+
+        <h2>커밋 메시지</h2>
+        <p>법령 커밋은 공포일자를 Git author/committer date로 사용하며, law.go.kr 참조 URL과 메타데이터를 포함합니다:</p>
+
+        <div class="meta-block">
+            <h3>예시: 법률 개정 커밋</h3>
+            <pre>법률: 민법 (일부개정)
+
+법령 전문: https://www.law.go.kr/법령/민법
+제개정문: https://www.law.go.kr/법령/제개정문/민법/(12345,20260317)
+신구법비교: https://www.law.go.kr/법령/신구법비교/민법
+
+공포일자: 2026-03-17 | 공포번호: 12345
+소관부처: 법무부
+법령분야: 민사
+법령MST: 284415</pre>
+        </div>
+        <p>인프라 커밋은 일반 날짜와 <a href="https://www.conventionalcommits.org/">Conventional Commits</a> 형식을 사용합니다.</p>
+
+        <h2>기술 스택</h2>
+        <ul>
+            <li><strong>데이터 수집</strong>: Python + law.go.kr OpenAPI</li>
+            <li><strong>저장 형식</strong>: Markdown + YAML frontmatter</li>
+            <li><strong>버전 관리</strong>: Git (공포일자를 커밋 날짜로 사용)</li>
+            <li><strong>자동화</strong>: GitHub Actions (매일 13:00 KST 자동 업데이트)</li>
+            <li><strong>웹사이트</strong>: 정적 HTML, GitHub Pages 배포</li>
+        </ul>
+
+        <h2>영감</h2>
+        <p>이 프로젝트는 <a href="https://legalize.dev">legalize.dev</a>에서 영감을 받았습니다. legalize.dev는 스페인 법령 8,600건 이상을 Git으로 관리하는 프로젝트입니다.</p>
+
+        <h2>라이선스</h2>
+        <p><strong>법령 원문</strong>: 대한민국 정부 공공저작물 (자유 이용 가능)<br>
+        <strong>저장소 구조 및 도구</strong>: <a href="https://github.com/9bow/legalize-kr/blob/main/LICENSE">MIT License</a></p>
+
+        <h2>기여하기</h2>
+        <p>법령 텍스트에 오류를 발견했거나, 누락된 개정 사항이 있다면 <a href="https://github.com/9bow/legalize-kr/issues">GitHub Issues</a>에서 알려주세요. 법령명, 조항, 공식 출처를 함께 기재해 주시면 감사하겠습니다.</p>
+    </div>
+</div>
+
+<footer>
+    <div class="container" style="max-width: 1080px;">
+        <div class="footer-inner">
+            <span>&#x2696;&#xFE0F; Legalize KR · 데이터 출처: <a href="https://www.law.go.kr">국가법령정보센터</a></span>
+            <div style="display: flex; gap: 24px;">
+                <a href="index.html">홈</a>
+                <a href="https://github.com/9bow/legalize-kr">GitHub</a>
+                <a href="https://legalize.dev">legalize.dev</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    fetch('stats.json')
+        .then(r => r.json())
+        .then(stats => {
+            const fmt = n => n.toLocaleString('ko-KR');
+            document.getElementById('stat-law').textContent = fmt(stats.types['법률'] || 0);
+            document.getElementById('stat-decree').textContent = fmt(stats.types['대통령령'] || 0);
+        })
+        .catch(() => {});
+</script>
+</body>
+</html>
