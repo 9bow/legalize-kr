@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-from api_client import get_law_detail, search_laws
+from api_client import get_law_detail, get_law_history, search_laws
 from checkpoint import get_processed_msts, mark_processed
 from config import KR_DIR, LAW_API_KEY
 from converter import (
@@ -106,74 +106,127 @@ def fetch_all_laws() -> list[dict]:
     return all_laws
 
 
+def import_law_with_history(
+    law_name: str,
+    law_type_filter: str | None = None,
+    dry_run: bool = False,
+) -> int:
+    """Import all historical versions of a single law.
+
+    Fetches amendment history, then for each version (oldest first),
+    fetches full detail, writes markdown, and commits with historical date.
+
+    Returns count of committed versions.
+    """
+    logger.info(f"Fetching history for: {law_name}")
+    history = get_law_history(law_name)
+    if not history:
+        logger.warning(f"No history found for: {law_name}")
+        return 0
+
+    logger.info(f"Found {len(history)} historical versions for {law_name}")
+
+    processed = get_processed_msts()
+    committed = 0
+    errors = 0
+
+    for i, entry in enumerate(history, 1):
+        mst = entry["법령일련번호"]
+        if mst in processed:
+            logger.info(f"  [{i}/{len(history)}] MST {mst} already processed, skipping")
+            continue
+
+        try:
+            detail = get_law_detail(mst)
+            meta = detail["metadata"]
+            law_type_name = meta.get("법령구분", "")
+
+            if law_type_filter and law_type_filter != law_type_name:
+                continue
+
+            fetched_name = meta.get("법령명한글", law_name)
+            file_path = get_law_path(fetched_name, law_type_name)
+            abs_path = KR_DIR.parent / file_path
+
+            # Merge history metadata into detail metadata
+            meta["제개정구분"] = entry.get("제개정구분명", meta.get("제개정구분", ""))
+            if not meta.get("공포번호"):
+                meta["공포번호"] = entry.get("공포번호", "")
+
+            prom_date = format_date(meta.get("공포일자", ""))
+            amendment = entry.get("제개정구분명", "")
+
+            if dry_run:
+                logger.info(f"  [{i}/{len(history)}] [DRY-RUN] MST={mst} {prom_date} {amendment} -> {file_path}")
+                continue
+
+            # Write markdown (overwrites previous version — git tracks history)
+            content = law_to_markdown(detail)
+            abs_path.parent.mkdir(parents=True, exist_ok=True)
+            abs_path.write_text(content, encoding="utf-8")
+
+            # Commit with historical date
+            commit_msg = build_commit_msg(fetched_name, law_type_name, mst, meta)
+            if not prom_date or len(prom_date) != 10:
+                prom_date = "2000-01-01"
+
+            result = commit_law(file_path, commit_msg, prom_date, mst)
+            if result:
+                mark_processed(mst)
+                committed += 1
+                logger.info(f"  [{i}/{len(history)}] Committed MST={mst} {prom_date} {amendment}")
+
+        except Exception as e:
+            logger.error(f"  [{i}/{len(history)}] Failed MST {mst}: {e}")
+            errors += 1
+
+    logger.info(f"History import for {law_name}: committed={committed}, errors={errors}")
+    return committed
+
+
 def import_from_api(
     law_type_filter: str | None = None,
     limit: int | None = None,
     dry_run: bool = False,
 ) -> int:
-    """Import laws from API. Returns count of committed laws."""
+    """Import laws from API with full amendment history. Returns count of committed versions."""
     reset_path_registry()
     logger.info("Fetching law list from API...")
     all_laws = fetch_all_laws()
     logger.info(f"Found {len(all_laws)} laws total")
 
-    processed = get_processed_msts()
-    laws = [l for l in all_laws if l["법령일련번호"] not in processed]
-    logger.info(f"Remaining after checkpoint: {len(laws)}")
+    # Deduplicate by law name (search returns current versions only)
+    seen_names: set[str] = set()
+    unique_laws: list[dict] = []
+    for law in all_laws:
+        name = law.get("법령명한글", "")
+        if name and name not in seen_names:
+            seen_names.add(name)
+            unique_laws.append(law)
 
     # Sort by promulgation date (oldest first)
-    laws.sort(key=lambda x: x.get("공포일자", ""))
+    unique_laws.sort(key=lambda x: x.get("공포일자", ""))
 
     if limit:
-        laws = laws[:limit]
+        unique_laws = unique_laws[:limit]
+
+    logger.info(f"Importing history for {len(unique_laws)} unique laws")
 
     committed = 0
     errors = 0
 
-    for i, search_entry in enumerate(laws, 1):
-        mst = search_entry["법령일련번호"]
+    for i, search_entry in enumerate(unique_laws, 1):
         name = search_entry.get("법령명한글", "")
 
         try:
-            # Fetch full detail
-            detail = get_law_detail(mst)
-            meta = detail["metadata"]
-            law_type_name = meta.get("법령구분", "")
-
-            # Filter by type if specified
-            if law_type_filter and law_type_filter != law_type_name:
-                continue
-
-            law_name = meta.get("법령명한글", name)
-            file_path = get_law_path(law_name, law_type_name)
-            abs_path = KR_DIR.parent / file_path
-
-            if dry_run:
-                logger.info(f"[DRY-RUN] {file_path}")
-                continue
-
-            # Write markdown
-            content = law_to_markdown(detail)
-            abs_path.parent.mkdir(parents=True, exist_ok=True)
-            abs_path.write_text(content, encoding="utf-8")
-
-            # Commit
-            commit_msg = build_commit_msg(law_name, law_type_name, mst, meta)
-            date = format_date(meta.get("공포일자", ""))
-            if not date or len(date) != 10:
-                date = "2000-01-01"
-
-            result = commit_law(file_path, commit_msg, date, mst)
-            if result:
-                mark_processed(mst)
-                committed += 1
-
+            count = import_law_with_history(name, law_type_filter, dry_run)
+            committed += count
         except Exception as e:
-            logger.error(f"Failed MST {mst} ({name}): {e}")
+            logger.error(f"Failed history import for {name}: {e}")
             errors += 1
 
         if i % 50 == 0:
-            logger.info(f"Progress: {i}/{len(laws)} (committed={committed}, errors={errors})")
+            logger.info(f"Progress: {i}/{len(unique_laws)} laws (committed={committed}, errors={errors})")
 
     logger.info(f"API import done: committed={committed}, errors={errors}")
     return committed
@@ -311,6 +364,7 @@ def import_from_csv(
 def main():
     parser = argparse.ArgumentParser(description="Import Korean laws")
     parser.add_argument("--law-type", help="Filter by 법령구분 (e.g., 법률, 대통령령)")
+    parser.add_argument("--law-name", help="Import history for a single law by name (e.g., 민법)")
     parser.add_argument("--limit", type=int, help="Limit number of laws")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--csv", type=Path, help="CSV file path (fallback mode)")
@@ -320,6 +374,9 @@ def main():
 
     if args.csv:
         committed = import_from_csv(args.csv, args.law_type, args.limit, args.dry_run)
+    elif args.law_name:
+        reset_path_registry()
+        committed = import_law_with_history(args.law_name, args.law_type, args.dry_run)
     elif LAW_API_KEY:
         committed = import_from_api(args.law_type, args.limit, args.dry_run)
     else:

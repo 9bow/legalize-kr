@@ -183,34 +183,81 @@ def get_law_detail(mst_id: str | int) -> dict:
     }
 
 
-def get_law_history(mst_id: str | int) -> list[dict]:
-    """Fetch amendment history for a law.
+def _parse_dot_date(raw: str) -> str:
+    """Parse dot-separated date like '1958.2.22' into 'YYYYMMDD' format."""
+    raw = raw.strip()
+    if not raw:
+        return ""
+    parts = raw.split(".")
+    if len(parts) == 3:
+        return f"{parts[0]}{int(parts[1]):02d}{int(parts[2]):02d}"
+    # Already compact or unexpected format
+    return raw.replace(".", "")
+
+
+def get_law_history(law_name: str) -> list[dict]:
+    """Fetch amendment history for a law via lsHistory HTML endpoint.
+
+    Args:
+        law_name: Exact law name (e.g., "민법")
 
     Returns list of dicts sorted oldest-first, each with:
-    법령MST, 법령명한글, 공포일자, 제개정구분명, 시행일자
+    법령일련번호, 법령명한글, 제개정구분명, 법령구분, 공포번호, 공포일자, 시행일자
     """
-    params = {
-        "target": "law",
-        "MST": str(mst_id),
-        "type": "XML",
-        "search": "2",
-    }
+    import re
 
-    # Try fetching history via the search endpoint with history mode
-    resp = _request(f"{LAW_API_BASE}/lawSearch.do", params)
-    root = ElementTree.fromstring(resp.content)
+    all_entries: list[dict] = []
+    page = 1
 
-    history = []
-    for item in root.findall(".//law"):
-        history.append({
-            "법령일련번호": item.findtext("법령일련번호", ""),
-            "법령명한글": item.findtext("법령명한글", ""),
-            "공포일자": item.findtext("공포일자", ""),
-            "제개정구분명": item.findtext("제개정구분명", ""),
-            "시행일자": item.findtext("시행일자", ""),
-            "법령상세링크": item.findtext("법령상세링크", ""),
-        })
+    while True:
+        _throttle()
+        resp = requests.get(
+            f"{LAW_API_BASE}/lawSearch.do",
+            params={
+                "OC": LAW_API_KEY,
+                "target": "lsHistory",
+                "query": law_name,
+                "type": "HTML",
+                "display": "100",
+                "page": str(page),
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+
+        # Parse table rows: each row has MST in link + td columns
+        # Columns: 순번 | 법령명 | 소관부처 | 제개정구분 | 법종구분 | 공포번호 | 공포일자 | 시행일자 | 현행연혁
+        rows = re.findall(r"<tr[^>]*>(.*?)</tr>", resp.text, re.DOTALL)
+        found = 0
+        for row in rows:
+            mst_match = re.search(r"MST=(\d+)", row)
+            if not mst_match:
+                continue
+            tds = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL)
+            if len(tds) < 8:
+                continue
+            clean = [re.sub(r"<[^>]+>", "", td).strip() for td in tds]
+            # clean: [순번, 법령명, 소관부처, 제개정구분, 법종구분, 공포번호, 공포일자, 시행일자, 현행연혁]
+            name = clean[1]
+            if name != law_name:
+                continue
+            prom_date = _parse_dot_date(clean[6])
+            enf_date = _parse_dot_date(clean[7])
+            all_entries.append({
+                "법령일련번호": mst_match.group(1),
+                "법령명한글": name,
+                "제개정구분명": clean[3],
+                "법령구분": clean[4],
+                "공포번호": clean[5].replace("제 ", "").replace("호", "").strip(),
+                "공포일자": prom_date,
+                "시행일자": enf_date,
+            })
+            found += 1
+
+        if found == 0 or len(rows) < 10:
+            break
+        page += 1
 
     # Sort oldest first
-    history.sort(key=lambda x: x.get("공포일자", ""))
-    return history
+    all_entries.sort(key=lambda x: x["공포일자"])
+    return all_entries
