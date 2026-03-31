@@ -133,7 +133,8 @@
         .code-header-dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--slate); }
         .code-header-title { font-family: var(--font-code); font-size: 13px; color: var(--steel); margin-left: 8px; }
         .code-body { padding: 24px; font-family: var(--font-code); font-size: 13.5px; line-height: 1.9; overflow-x: auto; color: var(--steel); }
-        .code-body .comment { color: var(--slate); }
+        .code-body .code-line { min-height: 26px; }
+        .code-body .comment { color: var(--steel); }
         .code-body .prompt { color: var(--accent-light); user-select: none; }
         .code-body .cmd { color: var(--snow); }
         .code-body .flag { color: var(--accent-light); }
@@ -287,19 +288,40 @@
                 <span class="code-header-title">terminal</span>
             </div>
             <div class="code-body">
-<span class="comment"># 민법에서 "혼인" 관련 조문 찾기</span>
-<span class="prompt">$ </span><span class="cmd">grep</span> <span class="flag">-n</span> <span class="string">"혼인"</span> <span class="path">kr/민법/법률.md</span>
+                <div class="code-line">
+                    <span class="comment"># 민법에서 "혼인" 관련 조문 찾기</span>
+                </div>
+                <div class="code-line">
+                    <span class="prompt">$ </span><span class="cmd">grep</span> <span class="flag">-n</span> <span class="string">"혼인"</span> <span class="path">kr/민법/법률.md</span>
+                </div>
+                <div class="code-line"></div>
 
-<span class="comment"># 민법 관련 법령 (법률, 시행령) 개정 이력</span>
-<span class="prompt">$ </span><span class="cmd">git log</span> <span class="flag">--oneline</span> <span class="flag">--</span> <span class="path">kr/민법/</span>
-<span class="hash">a1b2c3d</span> <span class="date">2026-03-17</span> <span class="tag">[법률]</span> 민법
+                <div class="code-line">
+                    <span class="comment"># 민법 관련 법령 (법률, 시행령) 개정 이력</span>
+                </div>
+                <div class="code-line">
+                    <span class="prompt">$ </span><span class="cmd">git log</span> <span class="flag">--oneline</span> <span class="flag">--</span> <span class="path">kr/민법/</span>
+                </div>
+                <div class="code-line">
+                    <span class="hash">a1b2c3d</span> <span class="date">2026-03-17</span> <span class="tag">[법률]</span> 민법
+                </div>
+                <div class="code-line"></div>
 
-<span class="comment"># 전체 법령에서 "주택임대차" 검색</span>
-<span class="prompt">$ </span><span class="cmd">grep</span> <span class="flag">-rl</span> <span class="string">"주택임대차"</span> <span class="path">kr/</span>
-<span class="path">kr/주택임대차보호법/법률.md</span>
+                <div class="code-line">
+                    <span class="comment"># 전체 법령에서 "주택임대차" 검색</span>
+                </div>
+                <div class="code-line">
+                    <span class="prompt">$ </span><span class="cmd">grep</span> <span class="flag">-rl</span> <span class="string">"주택임대차"</span> <span class="path">kr/</span>
+                    <span class="path">kr/주택임대차보호법/법률.md</span>
+                </div>
+                <div class="code-line"></div>
 
-<span class="comment"># metadata.json으로 빠른 조회</span>
-<span class="prompt">$ </span><span class="cmd">jq</span> <span class="string">'."284415"'</span> <span class="path">metadata.json</span>
+                <div class="code-line">
+                    <span class="comment"># metadata.json으로 빠른 조회</span>
+                </div>
+                <div class="code-line">
+                    <span class="prompt">$ </span><span class="cmd">jq</span> <span class="string">'."284415"'</span> <span class="path">metadata.json</span>
+                </div>
             </div>
         </div>
     </div>
