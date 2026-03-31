@@ -13,6 +13,7 @@ kr/{법령명}/
   대통령령.md    — 독립 대통령령 (규정, 직제 등 — 부모 법률 없음)
 ```
 
+디렉토리명은 법령명에서 띄어쓰기를 제거하여 사용합니다 (예: kr/민법/, kr/친일반민족행위자재산의국가귀속에관한특별법/).
 관련 법령(법률, 시행령, 시행규칙)이 하나의 디렉토리에 함께 관리됩니다.
 
 ## 법령 파일 형식
@@ -39,10 +40,10 @@ kr/{법령명}/
 
 ```bash
 # 특정 법령의 개정 이력
-git log -- "kr/민법/"
+git log -- kr/민법/
 
 # 법령 간 차이 비교
-git diff HEAD~1 -- "kr/민법/법률.md"
+git diff HEAD~1 -- kr/민법/법률.md
 
 # 전체 법령에서 특정 단어 검색
 grep -r "개인정보" kr/
@@ -77,4 +78,10 @@ git log --before="2025-01-01" -1 -- "kr/민법/법률.md"
 
 - 웹사이트: https://legalize.kr
 - GitHub: https://github.com/9bow/legalize-kr
-- 영감: https://legalize.dev (스페인 법령 Git 프로젝트)
+- 영감: https://github.com/legalize-dev/legalize (스페인 법령 Git 프로젝트)
+
+## 알려진 제한 사항
+
+Git은 Unix Epoch(1970-01-01) 이전 날짜를 지원하지 않습니다.
+공포일자가 1970년 이전인 5건의 법령은 커밋 날짜가 1970-01-01로 고정되어 있습니다.
+실제 공포일자는 각 파일의 YAML frontmatter `공포일자` 필드에 정확히 기록되어 있습니다.

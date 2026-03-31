@@ -89,7 +89,7 @@
 
         <h2>데이터 출처</h2>
         <p>모든 법령 데이터는 <a href="https://open.law.go.kr">국가법령정보센터 OpenAPI</a>에서 가져옵니다. 법령 원문은 대한민국 정부의 공공저작물로 자유롭게 이용할 수 있습니다.</p>
-        <p><strong>법률 <span id="stat-law">—</span>건</strong>과 <strong>대통령령 <span id="stat-decree">—</span>건</strong>이 수록되어 있으며, 향후 부령, 대법원규칙 등으로 확장할 예정입니다.</p>
+        <p>현재 법률, 대통령령, 부령, 대법원규칙, 헌법재판소규칙 등 <strong>총 <span id="stat-total">—</span>건</strong>의 현행 법령이 수록되어 있습니다.</p>
 
         <h2>파일 구조</h2>
         <p>각 법령은 YAML 프론트매터가 포함된 Markdown 파일입니다. 관련 법령(법률, 시행령, 시행규칙)이 하나의 디렉토리에 함께 관리됩니다.</p>
@@ -117,7 +117,7 @@
         </div>
 
         <h2>디렉토리 구조</h2>
-        <p>법령명을 기준으로 디렉토리를 구성하며, 관련 법령이 하나의 폴더에 함께 관리됩니다:</p>
+        <p>법령명에서 띄어쓰기를 제거하여 디렉토리명으로 사용합니다. 이는 <a href="https://www.law.go.kr">법령 홈페이지</a>의 URL 규칙과 동일합니다.</p>
         <ul>
             <li><code>kr/{법률명}/법률.md</code> — 국회에서 제정하는 법률</li>
             <li><code>kr/{법률명}/시행령.md</code> — 법률의 시행령 (대통령령의 일종)</li>
@@ -131,16 +131,16 @@
         <div class="meta-block">
             <h3>터미널에서 바로 사용</h3>
             <pre><span style="color:#94A3B8"># 민법 관련 법령 (법률, 시행령) 개정 이력</span>
-git log -- "kr/민법/"
+git log -- kr/민법/
 
 <span style="color:#94A3B8"># 최근 개정에서 무엇이 바뀌었는지 확인</span>
-git diff HEAD~1 -- "kr/민법/법률.md"
+git diff HEAD~1 -- kr/민법/법률.md
 
 <span style="color:#94A3B8"># 전체 법령에서 특정 단어 검색</span>
 grep -r "개인정보" kr/
 
 <span style="color:#94A3B8"># 특정 날짜 시점의 법령 상태 확인</span>
-git log --before="2025-01-01" -1 -- "kr/민법/법률.md"
+git log --before="2025-01-01" -1 -- kr/민법/법률.md
 
 <span style="color:#94A3B8"># 법률 개정 커밋만 보기</span>
 git log --grep="^법률:"
@@ -167,6 +167,9 @@ git log --grep="^chore:"</pre>
         </div>
         <p>인프라 커밋은 일반 날짜와 <a href="https://www.conventionalcommits.org/">Conventional Commits</a> 형식을 사용합니다.</p>
 
+        <h2>알려진 제한 사항</h2>
+        <p>Git은 <strong>Unix Epoch(1970-01-01) 이전 날짜를 지원하지 않습니다.</strong> 이에 해당하는 5건의 법령(공포일자 1950~1969년)은 커밋 날짜가 1970-01-01로 고정되어 있습니다. 실제 공포일자는 각 파일의 YAML frontmatter <code>공포일자</code> 필드에 정확히 기록되어 있습니다.</p>
+
         <h2>기술 스택</h2>
         <ul>
             <li><strong>데이터 수집</strong>: Python + law.go.kr OpenAPI</li>
@@ -177,7 +180,7 @@ git log --grep="^chore:"</pre>
         </ul>
 
         <h2>영감</h2>
-        <p>이 프로젝트는 <a href="https://legalize.dev">legalize.dev</a>에서 영감을 받았습니다. legalize.dev는 스페인 법령 8,600건 이상을 Git으로 관리하는 프로젝트입니다.</p>
+        <p>이 프로젝트는 <a href="https://github.com/legalize-dev/legalize">legalize</a>에서 영감을 받았습니다. legalize는 스페인 법령 8,600건 이상을 Git으로 관리하는 프로젝트입니다.</p>
 
         <h2>라이선스</h2>
         <p><strong>법령 원문</strong>: 대한민국 정부 공공저작물 (자유 이용 가능)<br>
@@ -206,8 +209,7 @@ git log --grep="^chore:"</pre>
         .then(r => r.json())
         .then(stats => {
             const fmt = n => n.toLocaleString('ko-KR');
-            document.getElementById('stat-law').textContent = fmt(stats.types['법률'] || 0);
-            document.getElementById('stat-decree').textContent = fmt(stats.types['대통령령'] || 0);
+            document.getElementById('stat-total').textContent = fmt(stats.total || 0);
         })
         .catch(() => {});
 </script>
