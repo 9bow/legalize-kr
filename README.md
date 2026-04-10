@@ -124,6 +124,12 @@ kr/{법령명}/
 | [legalize-kr/compiler](https://github.com/legalize-kr/compiler) | 법령 API 결과 → git 컴파일러 |
 | [legalize-kr/legalize-web](https://github.com/legalize-kr/legalize-web) | 웹사이트 ([legalize.kr](https://legalize.kr)) |
 
+## 관련 프로젝트
+
+| 프로젝트 | 대상 | 설명 |
+|----------|------|------|
+| [wellsa-ai/regulate-kr](https://github.com/wellsa-ai/regulate-kr) | 금융 감독규정 | 금융위원회 고시·감독규정을 동일 방식(Markdown + Git)으로 관리 |
+
 ## 데이터 출처
 
 모든 법령 데이터는 [국가법령정보센터 OpenAPI](https://open.law.go.kr)에서 가져옵니다. 법령 원문은 대한민국 정부 공공저작물로 자유롭게 이용 가능합니다.
